@@ -2,8 +2,8 @@
 */
 
 $(document).ready(function() {
-	var socket = io.connect('http://0.0.0.0');
-	// var socket = io.connect('http://mturk-chatrooms.herokuapp.com');
+	// var socket = io.connect('http://0.0.0.0');
+	var socket = io.connect('http://mturk-chatrooms.herokuapp.com');
 
 	function admin () {
 		return ($('textarea').length != 0);
