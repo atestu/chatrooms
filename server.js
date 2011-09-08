@@ -68,6 +68,11 @@ function writeJSON (message, filename) {
 //Setup Socket.IO
 var io = io.listen(app);
 
+io.configure(function () { 
+  io.set("transports", ["xhr-polling"]); 
+  io.set("polling duration", 100); 
+});
+
 var currentRoom = '';
 var currentImage = '';
 var roomNumber = 0;
