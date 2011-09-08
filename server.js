@@ -68,8 +68,6 @@ function writeJSON (message, filename) {
 //Setup Socket.IO
 var io = io.listen(app);
 
-console.log("NO CONNECTION");
-
 var currentRoom = '';
 var currentImage = '';
 var roomNumber = 0;
@@ -81,14 +79,10 @@ io.sockets.on('connection', function(socket){
 		console.log('ROOMNUMBER: ' + roomNumber);
 		if (nbClients % 2 == 0) { // even: get in last room and increment roomNumber
 			knoxClient.get('images').on('response', function(res){
-			  console.log(res.statusCode);
-			  console.log(res.headers);
 			  res.setEncoding('utf8');
 			  res.on('data', function(chunk){
 					socket.emit('receive', 'images', chunk.split('\n')[roomNumber]);
 					knoxClient.get('chatrooms').on('response', function(res){
-					  console.log(res.statusCode);
-					  console.log(res.headers);
 					  res.setEncoding('utf8');
 					  res.on('data', function(chunk){
 							socket.emit('receive', 'chatrooms', chunk.split('\n')[roomNumber++]);
@@ -99,14 +93,10 @@ io.sockets.on('connection', function(socket){
 		}
 		else { // odd: new room
 			knoxClient.get('images').on('response', function(res){
-			  console.log(res.statusCode);
-			  console.log(res.headers);
 			  res.setEncoding('utf8');
 			  res.on('data', function(chunk){
 					socket.emit('receive', 'images', chunk.split('\n')[roomNumber]);
 					knoxClient.get('chatrooms').on('response', function(res){
-					  console.log(res.statusCode);
-					  console.log(res.headers);
 					  res.setEncoding('utf8');
 					  res.on('data', function(chunk){
 							socket.emit('receive', 'chatrooms', chunk.split('\n')[roomNumber]);
@@ -119,8 +109,6 @@ io.sockets.on('connection', function(socket){
 
 	socket.on('ask', function(type, callback) {
 		knoxClient.get(type).on('response', function(res){
-		  console.log(res.statusCode);
-		  console.log(res.headers);
 		  res.setEncoding('utf8');
 		  res.on('data', function(chunk){
 				socket.emit('receive', type, chunk);
@@ -129,7 +117,6 @@ io.sockets.on('connection', function(socket){
 	});
 	
 	socket.on('save', function(type, data, callback) {
-		console.log("Saving data: " + data);
 		callback(writeJSON(data, type));
 	});
 	
