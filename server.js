@@ -74,8 +74,8 @@ var roomNumber = 0;
 var nbClients = 0;
 
 io.sockets.on('connection', function(socket){
-	++nbClients;
 	socket.on('login', function () {
+		++nbClients;
 		console.log('ROOMNUMBER: ' + roomNumber);
 		if (nbClients % 2 == 0) { // even: get in last room and increment roomNumber
 			knoxClient.get('images').on('response', function(res){
@@ -121,11 +121,10 @@ io.sockets.on('connection', function(socket){
 	});
 	
 	socket.on('disconnect', function(){
-		if (nbClients % 2 == 0 && nbClients != 0) { // even: someone left a room but there's still another person there
-			--roomNumber;
-		}
-		console.log("DISCONNECT: NEW ROOM NUMBER: " + roomNumber);
 		--nbClients;
+		if (nbClients != 0 && nbClients % 2 == 1) // even: someone left a room but there's still another person there
+				--roomNumber;
+		console.log("DISCONNECT: NEW ROOM NUMBER: " + roomNumber);
 	});
 });
 
