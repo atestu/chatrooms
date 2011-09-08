@@ -2,8 +2,13 @@
 */
 
 $(document).ready(function() {
-	// var socket = io.connect('http://0.0.0.0', {'try multiple transports': true, 'transports': ['flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling', 'jsonp-polling']});
-	var socket = io.connect('http://mturk-chatrooms.herokuapp.com', {'try multiple transports': true, 'transports': ['flashsocket', 'htmlfile', 'xhr-multipart', 'xhr-polling', 'jsonp-polling']});
+	// var socket = io.connect('http://0.0.0.0');
+	var socket = io.connect('http://mturk-chatrooms.herokuapp.com');
+	
+	io.configure(function () { 
+	  io.set("transports", ["xhr-polling"]); 
+	  io.set("polling duration", 100); 
+	});
 
 	function admin () {
 		return ($('textarea').length != 0);
