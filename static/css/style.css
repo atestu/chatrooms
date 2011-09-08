@@ -1,0 +1,15 @@
+/* @override http://0.0.0.0:8081/css/style.css */
+
+body {
+	width: 100%;
+}
+
+#image {
+	position: relative;
+	width: 50%;
+}
+
+#iframe {
+	float: right;
+	width: 50%;
+}

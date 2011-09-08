@@ -1,0 +1,11 @@
+{
+  "name": "mturk-chatrooms",
+  "version": "0.0.1",
+  "dependencies": {
+    "express": "2.2.0",
+		"connect": "0.5.10",
+		"knox": "0.0.9",
+		"socket.io": "0.7",
+		"ejs": "0.4.3"
+  }
+}
