@@ -73,43 +73,88 @@ io.configure(function () {
   io.set("polling duration", 10); 
 });
 
+var rooms = [
+	{ name: '0',
+	 	open: true },
+	{ name: '1',
+	 	open: true },
+	{ name: '2',
+	 	open: true },
+	{ name: '3',
+	 	open: true },
+	{ name: '4',
+	 	open: true },
+	{ name: '5',
+	 	open: true },
+	{ name: '6',
+	 	open: true },
+	{ name: '7',
+	 	open: true },
+	{ name: '8',
+	 	open: true }
+]
 var currentRoom = '';
 var currentImage = '';
 var roomNumber = 0;
 var nbClients = 0;
+var delay = 10; // time to wait for another player, in minutes
+var nextRoom = true;
+var intervalId = 0;
+var maxClientsPerRoom = 3;
+
+function nbClientsInRoom (room) {
+	console.log("There are %s clients in room %s", io.sockets.clients(room).length, room);
+	return io.sockets.clients(room).length;
+}
+
+// setInterval(function () {
+// 	for (var i = rooms.length - 1; i >= 0; i--){
+// 		if (!rooms[i].open && nbClientsInRoom(rooms[i].name) == 0)
+// 			rooms[i].open = true;
+// 	};
+// }, 10000); // every 10 seconds, open rooms with no one in them
+
+setInterval(function () {
+	for (var i = 0; i < rooms.length; i++) {
+		if (rooms[i].open && (nbClientsInRoom(rooms[i].name) >= 1))
+			rooms[i].open = false;
+	};
+}, 60000 * delay); // every delay minutes, close open rooms with people in them
+
+function closeRoom (i) {
+	if (rooms[i].open && (nbClientsInRoom(rooms[i].name) == maxClientsPerRoom))
+	{
+		console.log("Closed room " + i);
+		rooms[i].open = false;
+	}
+}
+
+function joinLastOpenRoom (socket) {
+	for (var i = 0; i < rooms.length; i++) {
+		console.log(rooms[i]);
+		if (rooms[i].open) {
+			socket.join(rooms[i].name);
+			knoxClient.get('images').on('response', function(res){
+			  res.setEncoding('utf8');
+			  res.on('data', function(chunk){
+					console.log(i);
+					socket.emit('receive', 'images', chunk.split('\n')[i]);
+					knoxClient.get('chatrooms').on('response', function(res){
+					  res.setEncoding('utf8');
+					  res.on('data', function(chunk){
+							socket.emit('receive', 'chatrooms', chunk.split('\n')[i]);
+					  });
+					}).end();
+			  });
+			}).end();
+			return closeRoom(i);
+		}
+	};
+}
 
 io.sockets.on('connection', function(socket){
 	socket.on('login', function () {
-		++nbClients;
-		console.log('ROOMNUMBER: ' + roomNumber);
-		if (nbClients % 2 == 0) { // even: get in last room and increment roomNumber
-			knoxClient.get('images').on('response', function(res){
-			  res.setEncoding('utf8');
-			  res.on('data', function(chunk){
-					socket.emit('receive', 'images', chunk.split('\n')[roomNumber]);
-					knoxClient.get('chatrooms').on('response', function(res){
-					  res.setEncoding('utf8');
-					  res.on('data', function(chunk){
-							socket.emit('receive', 'chatrooms', chunk.split('\n')[roomNumber++]);
-					  });
-					}).end();
-			  });
-			}).end();
-		}
-		else { // odd: new room
-			knoxClient.get('images').on('response', function(res){
-			  res.setEncoding('utf8');
-			  res.on('data', function(chunk){
-					socket.emit('receive', 'images', chunk.split('\n')[roomNumber]);
-					knoxClient.get('chatrooms').on('response', function(res){
-					  res.setEncoding('utf8');
-					  res.on('data', function(chunk){
-							socket.emit('receive', 'chatrooms', chunk.split('\n')[roomNumber]);
-					  });
-					}).end();
-			  });
-			}).end();
-		}
+		joinLastOpenRoom(socket);
 	});
 
 	socket.on('ask', function(type, callback) {
@@ -126,10 +171,14 @@ io.sockets.on('connection', function(socket){
 	});
 	
 	socket.on('disconnect', function(){
-		--nbClients;
-		if (nbClients != 0 && nbClients % 2 == 1) // even: someone left a room but there's still another person there
-				--roomNumber;
-		console.log("DISCONNECT: NEW ROOM NUMBER: " + roomNumber);
+		for (var i = rooms.length - 1; i >= 0; i--){
+			console.log("room %s, with %s clients", rooms[i], nbClientsInRoom(rooms[i].name));
+			if (!rooms[i].open && (nbClientsInRoom(rooms[i].name) == maxClientsPerRoom)) {
+				console.log("Reopened room ", rooms[i].name);
+				rooms[i].open = true;
+				return;
+			}
+		};
 	});
 });
 
