@@ -136,16 +136,33 @@ function joinLastOpenRoom (socket) {
 			socket.join(rooms[i].name);
 			knoxClient.get('images').on('response', function(res){
 			  res.setEncoding('utf8');
+				var result = '';
 			  res.on('data', function(chunk){
-					console.log(i);
-					socket.emit('receive', 'images', chunk.split('\n')[i]);
-					knoxClient.get('chatrooms').on('response', function(res){
+					result += chunk;
+			  });	
+				res.on('end', function() {
+					socket.emit('receive', 'images', result.split('\n')[i]);
+				});
+				knoxClient.get('chatrooms').on('response', function(res){
+				  res.setEncoding('utf8');
+					var result = '';
+				  res.on('data', function(chunk){
+						result += chunk;
+				  });
+					res.on('end', function() {
+						socket.emit('receive', 'chatrooms', result.split('\n')[i]);						
+					});
+					knoxClient.get('captions').on('response', function(res){
 					  res.setEncoding('utf8');
+						var result = '';
 					  res.on('data', function(chunk){
-							socket.emit('receive', 'chatrooms', chunk.split('\n')[i]);
+							result += chunk;
 					  });
+						res.on('end', function() {
+							socket.emit('receive', 'captions', result.split('\n')[i]);						
+						});
 					}).end();
-			  });
+				}).end();
 			}).end();
 			return closeRoom(i);
 		}
@@ -173,7 +190,7 @@ io.sockets.on('connection', function(socket){
 	socket.on('disconnect', function(){
 		for (var i = rooms.length - 1; i >= 0; i--){
 			console.log("room %s, with %s clients", rooms[i], nbClientsInRoom(rooms[i].name));
-			if (!rooms[i].open && (nbClientsInRoom(rooms[i].name) == maxClientsPerRoom)) {
+			if (!rooms[i].open && (nbClientsInRoom(rooms[i].name) == 1)) {
 				console.log("Reopened room ", rooms[i].name);
 				rooms[i].open = true;
 				return;

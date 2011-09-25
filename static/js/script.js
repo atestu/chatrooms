@@ -11,6 +11,7 @@ $(document).ready(function() {
 	if (admin ()) {
 		socket.emit('ask', 'images');
 		socket.emit('ask', 'chatrooms');
+		socket.emit('ask', 'captions');
 	}
 	else {
 		socket.emit('login');
@@ -18,11 +19,16 @@ $(document).ready(function() {
 	
 	socket.on('receive', function (type, data) {
 		if (data)
-			if (type == 'images') {
-				admin () ? $('#images').text(data) : $('img').attr('src', data);
-			}
-			else {
-				admin () ? $('#chatrooms').text(data) : $('#iframe').append(data);
+			switch (type) {
+				case 'images':
+					admin () ? $('#images').text(data) : $('img').attr('src', data);
+					break;
+				case 'chatrooms':
+					admin () ? $('#chatrooms').text(data) : $('#iframe').append(data);
+					break;
+				case 'captions':
+					admin () ? $('#captions').text(data) : $('#caption').append(data);
+					break;
 			}
 		else
 			$('#iframe').append('No enough ' + type + '! Go to admin!<br />');
@@ -30,9 +36,11 @@ $(document).ready(function() {
 
 	$('#send').live('click', function () {
 		socket.emit('save', 'images', $('#images').val(), function (response) {
-			socket.emit('save', 'chatrooms', $('#chatrooms').val(), function (response) {			
-				console.log(response);
-				window.location.replace('/');
+			socket.emit('save', 'chatrooms', $('#chatrooms').val(), function (response) {
+				socket.emit('save', 'captions', $('#captions').val(), function (response) {	
+					console.log(response);
+					window.location.replace('/');
+				})
 			})
 		})
 	});
