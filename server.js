@@ -107,12 +107,12 @@ function nbClientsInRoom (room) {
 	return io.sockets.clients(room).length;
 }
 
-setInterval(function () {
-	for (var i = rooms.length - 1; i >= 0; i--){
-		if (!rooms[i].open && nbClientsInRoom(rooms[i].name) == 0)
-			rooms[i].open = true;
-	};
-}, 10000); // every 10 seconds, open rooms with no one in them
+// setInterval(function () {
+// 	for (var i = rooms.length - 1; i >= 0; i--){
+// 		if (!rooms[i].open && nbClientsInRoom(rooms[i].name) == 0)
+// 			rooms[i].open = true;
+// 	};
+// }, 10000); // every 10 seconds, open rooms with no one in them
 
 setInterval(function () {
 	for (var i = 0; i < rooms.length; i++) {
