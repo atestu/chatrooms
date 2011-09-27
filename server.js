@@ -114,13 +114,6 @@ setInterval(function () {
 	};
 }, 10000); // every 10 seconds, open rooms with no one in them
 
-setInterval(function () {
-	for (var i = 0; i < rooms.length; i++) {
-		if (rooms[i].open && (nbClientsInRoom(rooms[i].name) >= 1))
-			rooms[i].open = false;
-	};
-}, 60000 * delay); // every delay minutes, close open rooms with people in them
-
 function closeRoom (i) {
 	if (rooms[i].open && (nbClientsInRoom(rooms[i].name) == maxClientsPerRoom))
 	{
@@ -164,6 +157,9 @@ function joinLastOpenRoom (socket) {
 					}).end();
 				}).end();
 			}).end();
+			setTimeout(function () {
+				rooms[i].open = false;
+			}, 60000 * delay); // close room in delay minutes
 			return closeRoom(i);
 		}
 	};
