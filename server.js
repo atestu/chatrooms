@@ -100,7 +100,7 @@ var nbClients = 0;
 var delay = 10; // time to wait for another player, in minutes
 var nextRoom = true;
 var intervalId = 0;
-var maxClientsPerRoom = 2;
+var maxClientsPerRoom = 3;
 
 function nbClientsInRoom (room) {
 	console.log("There are %s clients in room %s", io.sockets.clients(room).length, room);
