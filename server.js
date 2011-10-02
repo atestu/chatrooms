@@ -102,6 +102,7 @@ var nextRoom = true;
 var intervalId = 0;
 var maxClientsPerRoom = 2; // Change the size of chatrooms
 
+
 function nbClientsInRoom (room) {
 	console.log("There are %s clients in room %s", io.sockets.clients(room).length, room);
 	return io.sockets.clients(room).length;
