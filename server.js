@@ -100,9 +100,19 @@ var nbClients = 0;
 var delay = 10; // time to wait for another player, in minutes
 var nextRoom = true;
 var intervalId = 0;
-var maxClientsPerRoom = 2; // Change the size of chatrooms
+var maxClientsPerRoom = 3; // Change the size of chatrooms
 
 
+// knoxClient.get('nbchatrooms').on('response', function(res){
+//   res.setEncoding('utf8');
+//   res.on('data', function(chunk){
+// 		console.log(chunk);
+// 	});
+// 		res.on('end', function() {
+// 			socket.emit('receive', 'nbchatrooms', result.split('\n')[i]);						
+// 		});
+// }).end();
+	
 function nbClientsInRoom (room) {
 	console.log("There are %s clients in room %s", io.sockets.clients(room).length, room);
 	return io.sockets.clients(room).length;
