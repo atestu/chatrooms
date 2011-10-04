@@ -100,14 +100,14 @@ var nbClients = 0;
 var delay = 10; // time to wait for another player, in minutes
 var nextRoom = true;
 var intervalId = 0;
-// var maxClientsPerRoom = 2; // Change the size of chatrooms
+var maxClientsPerRoom = 0; // Change the size of chatrooms
 
 
 knoxClient.get('nbchatrooms').on('response', function(res){
   res.setEncoding('utf8');
   res.on('data', function(chunk){
 		maxClientsPerRoom = chunk;
-		console.log('CHATROOM SIZE : '+chunk);
+		console.log('CHATROOM SIZE : '+maxClientsPerRoom);
 	});
 }).end();
 	
@@ -165,7 +165,7 @@ function joinLastOpenRoom (socket) {
 						});
 					}).end();
 				}).end();
-			}).end();
+			}).end();						
 			setTimeout(function () {
 				rooms[i].open = false;
 			}, 60000 * delay); // close room in delay minutes
