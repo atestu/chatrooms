@@ -106,7 +106,7 @@ var intervalId = 0;
 knoxClient.get('nbchatrooms').on('response', function(res){
   res.setEncoding('utf8');
   res.on('data', function(chunk){
-		maxClientsPerRoom = chunck;
+		maxClientsPerRoom = chunk;
 		console.log('CHATROOM SIZE : '+chunk);
 	});
 }).end();
